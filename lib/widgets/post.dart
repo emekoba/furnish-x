@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 // ignore: must_be_immutable
 class Post extends StatelessWidget {
+  int id;
   String image;
   String name;
   String creator;
@@ -11,13 +12,16 @@ class Post extends StatelessWidget {
   String price;
   bool favorite;
   Function onTap;
+  Function addToFavorites;
 
   Post(
       {Key? key,
+      required this.id,
       required this.image,
       required this.favorite,
       required this.creator,
       required this.onTap,
+      required this.addToFavorites,
       required this.price,
       required this.name,
       required this.description})
@@ -26,14 +30,7 @@ class Post extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => onTap({
-        "name": name,
-        "price": price,
-        "image": image,
-        "description": description,
-        "favorite": favorite,
-        "creator": creator,
-      }),
+      onTap: () => onTap(id),
       child: Container(
           height: 230,
           margin: const EdgeInsets.only(bottom: 40),
@@ -48,17 +45,20 @@ class Post extends StatelessWidget {
               Positioned(
                   right: 10,
                   top: 10,
-                  child: Container(
-                      height: 35,
-                      width: 35,
-                      decoration: const BoxDecoration(
-                          shape: BoxShape.circle, color: Colors.white),
-                      child: Icon(
-                          favorite
-                              ? FontAwesomeIcons.solidHeart
-                              : FontAwesomeIcons.heart,
-                          size: 15,
-                          color: Colors.redAccent)))
+                  child: InkWell(
+                    onTap: () => addToFavorites(id),
+                    child: Container(
+                        height: 35,
+                        width: 35,
+                        decoration: const BoxDecoration(
+                            shape: BoxShape.circle, color: Colors.white),
+                        child: Icon(
+                            favorite
+                                ? FontAwesomeIcons.solidHeart
+                                : FontAwesomeIcons.heart,
+                            size: 15,
+                            color: Colors.redAccent)),
+                  ))
             ]),
             Expanded(
                 child: Container(

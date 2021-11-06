@@ -15,6 +15,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   motion_tab_bar_v2:
   font_awesome_flutter:
+  get:
 
 dev_dependencies:
   flutter_test:

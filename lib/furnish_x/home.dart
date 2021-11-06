@@ -4,6 +4,7 @@ import 'package:furnish_x/globals/app_data.dart';
 import 'package:furnish_x/widgets/post.dart';
 import 'package:furnish_x/widgets/search_bar.dart';
 import 'package:furnish_x/widgets/top_tab_bar.dart';
+import 'package:get/get.dart';
 
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
@@ -12,9 +13,9 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AppData _app_data = AppData();
+    final _app_data = Get.put(AppData());
 
-    _previewCouch(couchData) {
+    _previewCouch(id) {
       // showModalBottomSheet(
       //   context: context,
       //   isScrollControlled: true,
@@ -23,8 +24,11 @@ class Home extends StatelessWidget {
       //   ),
       // );
 
-      Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => CouchPreview(data: couchData)));
+      Get.to(CouchPreview(id: id));
+    }
+
+    _addToFavorites(id) {
+      _app_data.addToFavorites(id);
     }
 
     return Scaffold(
@@ -44,7 +48,7 @@ class Home extends StatelessWidget {
                       Text("Perfect Choice!",
                           style: Theme.of(context).textTheme.headline6),
                       const SizedBox(height: 30),
-                      const SearchBar(),
+                      SearchBar(onChange: () {}),
                       const SizedBox(height: 30),
                       TopTabBar(
                         tabs: const ["All", "Chair", "Table", "Lamp", "Floor"],
@@ -52,18 +56,30 @@ class Home extends StatelessWidget {
                       ),
                       const SizedBox(height: 30),
                       Expanded(
-                          child: ListView(
-                              children: _app_data.posts.keys
-                                  .map((e) => Post(
-                                      onTap: _previewCouch,
-                                      favorite: true,
-                                      name: e,
-                                      creator: _app_data.posts[e]["creator"],
-                                      image: _app_data.posts[e]["image"],
-                                      price: _app_data.posts[e]["price"],
-                                      description: _app_data.posts[e]
-                                          ["description"]))
-                                  .toList()))
+                          child: GetBuilder(
+                              init: AppData(),
+                              builder: (ctx) {
+                                return ListView(
+                                    children: _app_data.posts.keys
+                                        .map((e) => Post(
+                                              id: e,
+                                              key: Key(e.toString()),
+                                              onTap: _previewCouch,
+                                              addToFavorites: _addToFavorites,
+                                              favorite: _app_data.posts[e]
+                                                  ["favorite"],
+                                              name: _app_data.posts[e]["name"],
+                                              creator: _app_data.posts[e]
+                                                  ["creator"],
+                                              image: _app_data.posts[e]
+                                                  ["image"],
+                                              price: _app_data.posts[e]
+                                                  ["price"],
+                                              description: _app_data.posts[e]
+                                                  ["description"],
+                                            ))
+                                        .toList());
+                              }))
                     ]))));
   }
 }
